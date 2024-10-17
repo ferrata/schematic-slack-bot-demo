@@ -1,4 +1,4 @@
-import { SchematicAction } from "./schematic-action"
+import type { SchematicAction } from "./schematic-action"
 
 const subscribersById = new Map<string, string[]>()
 

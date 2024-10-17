@@ -1,30 +1,38 @@
-// import { z } from 'zod'
+import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt'
 import yargs from 'yargs'
-import type { AllMiddlewareArgs, App, SlackCommandMiddlewareArgs } from '@slack/bolt'
-
-import { addSubscriber, removeSubscriber } from '../../lib/subscribers'
-import { SchematicAction } from '../../lib/schematic-action'
 import { z } from 'zod'
 
-type Command = {
-  name: 'subscribe'
-  action: SchematicAction
-} | {
-  name: 'unsubscribe'
-  action: SchematicAction
-}
+import { SchematicAction } from '../../lib/schematic-action'
+import { addSubscriber, removeSubscriber } from '../../lib/subscribers'
+
+type Command =
+  | {
+      name: 'subscribe'
+      action: SchematicAction
+    }
+  | {
+      name: 'unsubscribe'
+      action: SchematicAction
+    }
 
 const commandSchema = z.enum(['subscribe', 'unsubscribe'], {
-  errorMap: (_, ctx) => ({ message: `Unknown command \`${ctx.data}\`. Supported commands: \`subscribe\`, \`unsubscribe\`.` })
+  errorMap: (_, ctx) => ({
+    message: `Unknown command \`${ctx.data}\`. Supported commands: \`subscribe\`, \`unsubscribe\`.`,
+  }),
 })
 
-const schematicActionSchema = z.enum([
-  SchematicAction.PLAN_ENTITLEMENT_CREATED,
-  SchematicAction.PLAN_ENTITLEMENT_UPDATED,
-  SchematicAction.PLAN_ENTITLEMENT_DELETED,
-], {
-  errorMap: (_, ctx) => ({ message: `Unknown action \`${ctx.data}\`. Supported actions: \`${Object.values(SchematicAction).join('\`, \`')}\`` })
-})
+const schematicActionSchema = z.enum(
+  [
+    SchematicAction.PLAN_ENTITLEMENT_CREATED,
+    SchematicAction.PLAN_ENTITLEMENT_UPDATED,
+    SchematicAction.PLAN_ENTITLEMENT_DELETED,
+  ],
+  {
+    errorMap: (_, ctx) => ({
+      message: `Unknown action \`${ctx.data}\`. Supported actions: \`${Object.values(SchematicAction).join('`, `')}\``,
+    }),
+  },
+)
 
 async function parseCommand(input: string): Promise<Command> {
   const parsed = await yargs(input)
@@ -55,7 +63,12 @@ async function parseCommand(input: string): Promise<Command> {
   }
 }
 
-export async function schematicCommand({ ack, respond, body, command }: AllMiddlewareArgs & SlackCommandMiddlewareArgs) {
+export async function schematicCommand({
+  ack,
+  respond,
+  body,
+  command,
+}: AllMiddlewareArgs & SlackCommandMiddlewareArgs) {
   try {
     await ack()
 
@@ -65,7 +78,7 @@ export async function schematicCommand({ ack, respond, body, command }: AllMiddl
       addSubscriber(parsedCommand.action, body.channel_id)
       await respond({
         response_type: 'in_channel',
-        text: `Subscribed this channel to action \`${parsedCommand.action}\``
+        text: `Subscribed this channel to action \`${parsedCommand.action}\``,
       })
       console.log(`Subscribed ${body.channel_id} to action ${parsedCommand.action}`)
     }
@@ -74,11 +87,11 @@ export async function schematicCommand({ ack, respond, body, command }: AllMiddl
       removeSubscriber(parsedCommand.action, body.channel_id)
       await respond({
         response_type: 'in_channel',
-        text: `Unsubscribed this channel from action \`${parsedCommand.action}\``
+        text: `Unsubscribed this channel from action \`${parsedCommand.action}\``,
       })
       console.log(`Unsubscribed ${body.channel_id} from action ${parsedCommand.action}`)
     }
-
+    // biome-ignore lint/suspicious/noExplicitAny: error handler
   } catch (error: any) {
     console.error(error)
 

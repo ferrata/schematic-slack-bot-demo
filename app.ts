@@ -1,5 +1,5 @@
+import { strict } from 'node:assert'
 import { App, LogLevel } from '@slack/bolt'
-import { strict } from 'assert'
 import * as dotenv from 'dotenv'
 
 import { schematicCommand } from './listeners/commands/schematic-command'
@@ -15,13 +15,13 @@ const app = new App({
   socketMode: true,
   appToken: process.env.SLACK_APP_TOKEN,
   logLevel: LogLevel.DEBUG,
-  port: process.env.SLACK_APP_PORT ? parseInt(process.env.SLACK_APP_PORT) : 3000,
+  port: process.env.SLACK_APP_PORT ? Number.parseInt(process.env.SLACK_APP_PORT) : 3000,
   customRoutes: [
     {
       path: '/schematic-webhook',
       method: ['POST'],
       handler: (req, res) => onSchematicWebhook(app, req, res),
-    }
+    },
   ],
 })
 

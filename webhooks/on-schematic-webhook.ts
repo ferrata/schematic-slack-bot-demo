@@ -1,5 +1,5 @@
-import { App } from "@slack/bolt"
-import { ServerResponse } from "node:http"
+import type { App } from "@slack/bolt"
+import type { ServerResponse } from "node:http"
 import { text } from "node:stream/consumers"
 import { getSubscribers } from "../lib/subscribers"
 
