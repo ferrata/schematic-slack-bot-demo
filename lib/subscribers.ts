@@ -1,17 +1,17 @@
-import type { SchematicAction } from "./schematic-action"
+import type { Action } from "./schematic/action"
 
 const subscribersById = new Map<string, string[]>()
 
-export function addSubscriber(action: SchematicAction, channelId: string) {
+export function addSubscriber(action: Action, channelId: string) {
   const subscribers = subscribersById.get(action) ?? []
   subscribersById.set(action, [...subscribers, channelId])
 }
 
-export function removeSubscriber(action: SchematicAction, channelId: string) {
+export function removeSubscriber(action: Action, channelId: string) {
   const subscribers = subscribersById.get(action) ?? []
   subscribersById.set(action, subscribers.filter((s) => s !== channelId))
 }
 
-export function getSubscribers(action: SchematicAction): string[] {
+export function getSubscribers(action: Action): string[] {
   return subscribersById.get(action) ?? []
 }
