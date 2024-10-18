@@ -6,6 +6,7 @@ import { match } from 'ts-pattern'
 import { schematicCommand } from './listeners/commands/schematic-command'
 import { onSchematicWebhook } from './webhooks/on-schematic-webhook'
 import { logger } from './lib/logger'
+import { onAppHomeOpened } from './listeners/events/on-app-home-opened'
 
 dotenv.config()
 
@@ -47,6 +48,7 @@ const app = new App({
 
 async function main() {
   try {
+    app.event('app_home_opened', onAppHomeOpened)
     app.command('/schematic', schematicCommand)
 
     await app.start()
