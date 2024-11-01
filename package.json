@@ -25,7 +25,7 @@
     "url": "https://github.com/ferrata/schematic-slack-bot-demo/issues"
   },
   "dependencies": {
-    "@slack/bolt": "^3.22.0",
+    "@slack/bolt": "^4.0.1",
     "dotenv": "~16.4.5",
     "pino": "^9.5.0",
     "pino-pretty": "^11.3.0",
